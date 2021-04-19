@@ -1,7 +1,7 @@
 import React from 'react';
 import '../App.css';
 import {Button, Input} from 'reactstrap';
-import { signupUser } from '../api/auth';
+import { signupUser, signinUser } from '../api/auth';
 import { fetchTimeslot } from '../api/timeslot';
 
 const Login = ({ setIsAuth, setUserId, userId }) => {
@@ -25,20 +25,25 @@ const Login = ({ setIsAuth, setUserId, userId }) => {
             <h6 className="text-danger" style={{maxWidth: "150%"}}>{creds.password === '' && btnClicked ? "Enter password" : creds.password.length < 5 && btnClicked ? "Password must have at least 5 characters" : ""}</h6>
           </div>
         </div>
-        <div className="mt-3 row">
-          <Button color="info" className="col-6 offset-3" onClick={() => {
+        <div className="mt-2 row">
+          <Button color="primary" className="col-3 offset-1" onClick={() => {
             setBtnClicked(true);
             if (creds.username.length >= 4 && creds.password.length >= 5) {
               setUserId("");
-              signupUser(creds, setUserId)
-              .then(() => {
-                if (localStorage.getItem('token') !== "") {
-                    setIsAuth(true);
-                }
-              });
+              signupUser(creds, setUserId, setIsAuth);
             }
           }}>
-            <h3>Sign up / Sign in</h3>
+            <h3>Sign up</h3>
+          </Button>
+          <h5 className="col-1 offset-1 mt-2">or</h5>
+          <Button color="secondary" className="col-3 offset-1" onClick={() => {
+            setBtnClicked(true);
+            if (creds.username.length >= 4 && creds.password.length >= 5) {
+              setUserId("");
+              signinUser(creds, setUserId, setIsAuth);
+            }
+          }}>
+            <h3>Sign in</h3>
           </Button>
         </div>
       </div>

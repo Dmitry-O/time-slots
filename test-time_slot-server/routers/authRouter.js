@@ -1,6 +1,6 @@
 const fastify = require('fastify')();
 
-const config = require('./config');
+const config = require('../config');
 
 fastify.register(require('fastify-jwt'), {
     secret: 'supersecret'
@@ -45,9 +45,34 @@ async function AuthRouter (fastify) {
                         });
                     }
                     else {
+                        return res.send({error: true, message: "The user with this username is already registered", statusCode: 403});
+                    }
+                })
+            }
+        } catch (err) {
+            res.send(err);
+        }
+    });
+
+    fastify.post('/signin', async (req, res) => {
+        try {
+            const { username, password } = req.body;
+            if (!username || !password) {
+                res.status(400).send({error: true, message: "Username or password are not entered!"});
+                return ;
+            }
+
+            fastify.pg.connect(onConnect)
+            function onConnect (err, client, release) {
+                if (err) return res.send(err)
+
+                client.query("SELECT * FROM users WHERE username = '" + username + "' and password = '" + password + "';")
+                .then(result => {
+                    if (result.rows.length !== 0) {
                         const token = fastify.jwt.sign(req.body);
                         res.status(200).send({token: token, user: result.rows[0]});
                     }
+                    else return res.send({error: true, statusText: "Username or password are wrong", status: 403});
                 })
             }
         } catch (err) {
