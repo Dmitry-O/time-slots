@@ -1,11 +1,13 @@
 const fastify = require('fastify')();
 
+const config = require('./config');
+
 fastify.register(require('fastify-jwt'), {
     secret: 'supersecret'
 });
 
 fastify.register(require('fastify-postgres'), {
-    connectionString: 'postgres://dngcgyzv:aZtRAwtsTxmLk-HHzdcHlYO6vtgO9TYj@queenie.db.elephantsql.com:5432/dngcgyzv'
+    connectionString: config.connectionString
 });
 
 async function AuthRouter (fastify) {

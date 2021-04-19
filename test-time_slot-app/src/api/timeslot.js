@@ -26,6 +26,7 @@ export const fetchTimeslot = (setSlots, userId, token) => {
     .then(response => response.json())
     .then(response => {
         setSlots(response.value);
+        //setChoosenSlots(slots !== "" ? slots.split(',') : []);
     })
     .catch(error => console.log(error))
 }

@@ -1,6 +1,6 @@
 import { serverUrl } from '../serverUrl';
 
-export const signupUser = async (creds, setToken, setUserId, token) => {
+export const signupUser = async (creds, setUserId) => {
     return fetch(serverUrl + 'signup', {
         method: 'POST',
         headers: { 
@@ -22,7 +22,8 @@ export const signupUser = async (creds, setToken, setUserId, token) => {
     )
     .then(response => response.json())
     .then(response => {
-        setToken(response.token);
+        localStorage.removeItem('token');
+        localStorage.setItem('token', response.token);
         setUserId(response.user.id);
     })
     .catch(error => {
