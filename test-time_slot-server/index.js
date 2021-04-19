@@ -1,6 +1,6 @@
 const fastify = require('fastify')()
 
-var config = require('./config');
+const config = require('./config');
 
 fastify.register(require('fastify-cors'), {
   origin: '*'
