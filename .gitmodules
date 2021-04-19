@@ -1,6 +1,0 @@
-[submodule "test-time_slot-app"]
-	path = test-time_slot-app
-	url = https://github.com/Dmitry-O/test-time_slot-app.git
-[submodule "test-time_slot-server"]
-	path = test-time_slot-server
-	url = https://github.com/Dmitry-O/test-time_slot-server.git
