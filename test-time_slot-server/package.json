@@ -1,0 +1,21 @@
+{
+  "name": "test-time_slot-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node index.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "fastify": "^3.14.1",
+    "fastify-cors": "^5.2.0",
+    "fastify-jwt": "^2.4.0",
+    "fastify-plugin": "^3.0.0",
+    "fastify-postgres": "^3.5.0",
+    "nodemon": "^2.0.7",
+    "pg": "^8.5.1"
+  }
+}
