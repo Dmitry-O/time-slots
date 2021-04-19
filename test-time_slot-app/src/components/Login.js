@@ -4,9 +4,7 @@ import {Button, Input} from 'reactstrap';
 import { signupUser } from '../api/auth';
 import { fetchTimeslot } from '../api/timeslot';
 
-let choosenSlots = [];
-
-const Login = ({setIsAuth}) => {
+const Login = ({ setIsAuth, setUserId, userId }) => {
     const [creds, setCreds] = React.useState({username: '', password: ''});
     const [btnClicked, setBtnClicked] = React.useState(false);
   
@@ -31,15 +29,11 @@ const Login = ({setIsAuth}) => {
           <Button color="info" className="col-6 offset-3" onClick={() => {
             setBtnClicked(true);
             if (creds.username.length >= 4 && creds.password.length >= 5) {
-              localStorage.removeItem('user_id');
-              signupUser(creds)
+              setUserId("");
+              signupUser(creds, setUserId)
               .then(() => {
-                if (localStorage.getItem('token') !== null) {
-                  fetchTimeslot()
-                  .then(() => {
-                    choosenSlots = localStorage.getItem('slots') !== null ? localStorage.getItem('slots').split(',') : [];
+                if (localStorage.getItem('token') !== "") {
                     setIsAuth(true);
-                  });
                 }
               });
             }
