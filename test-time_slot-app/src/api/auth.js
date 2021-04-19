@@ -1,6 +1,6 @@
 import { serverUrl } from '../serverUrl';
 
-export const signupUser = (creds) => {
+export const signupUser = async (creds, setToken, setUserId, token) => {
     return fetch(serverUrl + 'signup', {
         method: 'POST',
         headers: { 
@@ -22,9 +22,8 @@ export const signupUser = (creds) => {
     )
     .then(response => response.json())
     .then(response => {
-        localStorage.setItem('token', response.token);
-        localStorage.removeItem('user_id');
-        localStorage.setItem('user_id', response.user.id);
+        setToken(response.token);
+        setUserId(response.user.id);
     })
     .catch(error => {
         if (error == "Error: Error 401: Unauthorized") {

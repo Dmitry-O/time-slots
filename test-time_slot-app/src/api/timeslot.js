@@ -1,10 +1,10 @@
 import { serverUrl } from '../serverUrl';
 
-const bearer = 'Bearer ' + localStorage.getItem('token');
 
+export const fetchTimeslot = (setSlots, userId, token) => {
+    const bearer = 'Bearer ' + token;
 
-export const fetchTimeslot = () => {
-    return fetch(serverUrl + 'timeslot/' + localStorage.getItem('user_id'), {
+    return fetch(serverUrl + 'timeslot/' + userId, {
         method: 'GET',
         headers: { 
             'Content-Type':'application/json',
@@ -25,16 +25,16 @@ export const fetchTimeslot = () => {
     )
     .then(response => response.json())
     .then(response => {
-        localStorage.removeItem('slots');
-        console.log(response.value, " and user_id:");
-        localStorage.setItem('slots', response.value);
+        setSlots(response.value);
     })
     .catch(error => console.log(error))
 }
 
 
-export const postTimeslot = (value) => {
-    return fetch(serverUrl + 'timeslot/' + localStorage.getItem('user_id') , {
+export const postTimeslot = (value, userId, token) => {
+    const bearer = 'Bearer ' + token;
+
+    return fetch(serverUrl + 'timeslot/' + userId , {
         method: 'POST',
         headers: { 
             'Content-Type':'application/json',
@@ -57,7 +57,6 @@ export const postTimeslot = (value) => {
     .then(response => response.json())
     .then(response => {
         console.log(response);
-        //localStorage.setItem('slots', response.value);
     })
     .catch(error => console.log(error))
 }
