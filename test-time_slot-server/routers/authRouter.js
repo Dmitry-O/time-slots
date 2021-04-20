@@ -3,7 +3,7 @@ const fastify = require('fastify')();
 const config = require('../config');
 
 fastify.register(require('fastify-jwt'), {
-    secret: 'supersecret'
+    secret: config.secret
 });
 
 fastify.register(require('fastify-postgres'), {
@@ -20,34 +20,26 @@ async function AuthRouter (fastify) {
             }
 
             fastify.pg.connect(onConnect)
-            function onConnect (err, client, release) {
+            async function onConnect (err, client) {
                 if (err) return res.send(err)
 
-                client.query("SELECT * FROM users WHERE username = '" + username + "' and password = '" + password + "';")
-                .then(result => {
-                    if (result.rows.length === 0) {
-                        client.query("SELECT * FROM users WHERE username = '" + username + "';")
-                        .then(result => {
-                            if (result.rows.length !== 0) {
-                                res.status(401).send({error: true, message: "Wrong password"});
-                                return ;   
-                            }
-                            else {
-                                client.query("INSERT INTO users (username, password) VALUES('" + username +  "', '" + password + "');")
-                                .then(() => {
-                                    client.query("SELECT * FROM users WHERE username = '" + username + "' and password = '" + password + "';")
-                                    .then(result => {
-                                        const token = fastify.jwt.sign({username, password});
-                                        res.status(200).send({token: token, user: result.rows[0]});  
-                                    })
-                                })
-                            }
-                        });
+                let result = await client.query("SELECT * FROM users WHERE username = '" + username + "' and password = '" + password + "';");
+                if (result.rows.length === 0) {
+                    let result = await client.query("SELECT * FROM users WHERE username = '" + username + "';");
+                    if (result.rows.length !== 0) {
+                        res.status(401).send({error: true, message: "Wrong password"});
+                        return ;   
                     }
                     else {
-                        return res.send({error: true, message: "The user with this username is already registered", statusCode: 403});
+                        await client.query("INSERT INTO users (username, password) VALUES('" + username +  "', '" + password + "');");
+                        let result = await client.query("SELECT * FROM users WHERE username = '" + username + "' and password = '" + password + "';");
+                        const token = fastify.jwt.sign({username, password});
+                        res.status(200).send({token: token, user: result.rows[0]});  
                     }
-                })
+                }
+                else {
+                    return res.send({error: true, message: "The user with this username is already registered", statusCode: 403});
+                }
             }
         } catch (err) {
             res.send(err);
@@ -63,17 +55,15 @@ async function AuthRouter (fastify) {
             }
 
             fastify.pg.connect(onConnect)
-            function onConnect (err, client, release) {
+            async function onConnect (err, client) {
                 if (err) return res.send(err)
 
-                client.query("SELECT * FROM users WHERE username = '" + username + "' and password = '" + password + "';")
-                .then(result => {
-                    if (result.rows.length !== 0) {
-                        const token = fastify.jwt.sign(req.body);
-                        res.status(200).send({token: token, user: result.rows[0]});
-                    }
-                    else return res.send({error: true, statusText: "Username or password are wrong", status: 403});
-                })
+                let result = await client.query("SELECT * FROM users WHERE username = '" + username + "' and password = '" + password + "';");
+                if (result.rows.length !== 0) {
+                    const token = fastify.jwt.sign(req.body);
+                    res.status(200).send({token: token, user: result.rows[0]});
+                }
+                else return res.send({error: true, statusText: "Username or password are wrong", status: 403});
             }
         } catch (err) {
             res.send(err);
