@@ -18,7 +18,7 @@ fastify.register(require('./middleware/auth_middleware'));
 fastify.register(require('./routers/authRouter'));
 fastify.register(require('./routers/slotsRouter'));
 
-fastify.listen(process.env.PORT || 3001, err => {
+fastify.listen(process.env.PORT || config.port, err => {
   if (err) throw err
   console.log(`server listening on ${fastify.server.address().port}`)
 })
